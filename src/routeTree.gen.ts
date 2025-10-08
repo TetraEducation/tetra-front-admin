@@ -10,72 +10,156 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminMembersRouteImport } from './routes/admin/members'
-import { Route as AdminEnrollmentsRouteImport } from './routes/admin/enrollments'
-import { Route as AdminConfigurationsRouteImport } from './routes/admin/configurations'
+import { Route as AdminReportsIndexRouteImport } from './routes/admin/reports/index'
+import { Route as AdminProductsReportRouteImport } from './routes/admin/products/report'
+import { Route as AdminPlatformMembersAreaRouteImport } from './routes/admin/platform/members-area'
+import { Route as AdminPlatformConfigurationsRouteImport } from './routes/admin/platform/configurations'
+import { Route as AdminMembersReportRouteImport } from './routes/admin/members/report'
+import { Route as AdminMembersDataTableRouteImport } from './routes/admin/members/data-table'
+import { Route as AdminMembersColumsRouteImport } from './routes/admin/members/colums'
+import { Route as AdminGroupsReportRouteImport } from './routes/admin/groups/report'
+import { Route as AdminEnrollmentsReportRouteImport } from './routes/admin/enrollments/report'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminMembersRoute = AdminMembersRouteImport.update({
-  id: '/admin/members',
-  path: '/admin/members',
+const AdminReportsIndexRoute = AdminReportsIndexRouteImport.update({
+  id: '/admin/reports/',
+  path: '/admin/reports/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminEnrollmentsRoute = AdminEnrollmentsRouteImport.update({
-  id: '/admin/enrollments',
-  path: '/admin/enrollments',
+const AdminProductsReportRoute = AdminProductsReportRouteImport.update({
+  id: '/admin/products/report',
+  path: '/admin/products/report',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminConfigurationsRoute = AdminConfigurationsRouteImport.update({
-  id: '/admin/configurations',
-  path: '/admin/configurations',
+const AdminPlatformMembersAreaRoute =
+  AdminPlatformMembersAreaRouteImport.update({
+    id: '/admin/platform/members-area',
+    path: '/admin/platform/members-area',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AdminPlatformConfigurationsRoute =
+  AdminPlatformConfigurationsRouteImport.update({
+    id: '/admin/platform/configurations',
+    path: '/admin/platform/configurations',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AdminMembersReportRoute = AdminMembersReportRouteImport.update({
+  id: '/admin/members/report',
+  path: '/admin/members/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminMembersDataTableRoute = AdminMembersDataTableRouteImport.update({
+  id: '/admin/members/data-table',
+  path: '/admin/members/data-table',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminMembersColumsRoute = AdminMembersColumsRouteImport.update({
+  id: '/admin/members/colums',
+  path: '/admin/members/colums',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminGroupsReportRoute = AdminGroupsReportRouteImport.update({
+  id: '/admin/groups/report',
+  path: '/admin/groups/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminEnrollmentsReportRoute = AdminEnrollmentsReportRouteImport.update({
+  id: '/admin/enrollments/report',
+  path: '/admin/enrollments/report',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin/configurations': typeof AdminConfigurationsRoute
-  '/admin/enrollments': typeof AdminEnrollmentsRoute
-  '/admin/members': typeof AdminMembersRoute
+  '/admin/enrollments/report': typeof AdminEnrollmentsReportRoute
+  '/admin/groups/report': typeof AdminGroupsReportRoute
+  '/admin/members/colums': typeof AdminMembersColumsRoute
+  '/admin/members/data-table': typeof AdminMembersDataTableRoute
+  '/admin/members/report': typeof AdminMembersReportRoute
+  '/admin/platform/configurations': typeof AdminPlatformConfigurationsRoute
+  '/admin/platform/members-area': typeof AdminPlatformMembersAreaRoute
+  '/admin/products/report': typeof AdminProductsReportRoute
+  '/admin/reports': typeof AdminReportsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin/configurations': typeof AdminConfigurationsRoute
-  '/admin/enrollments': typeof AdminEnrollmentsRoute
-  '/admin/members': typeof AdminMembersRoute
+  '/admin/enrollments/report': typeof AdminEnrollmentsReportRoute
+  '/admin/groups/report': typeof AdminGroupsReportRoute
+  '/admin/members/colums': typeof AdminMembersColumsRoute
+  '/admin/members/data-table': typeof AdminMembersDataTableRoute
+  '/admin/members/report': typeof AdminMembersReportRoute
+  '/admin/platform/configurations': typeof AdminPlatformConfigurationsRoute
+  '/admin/platform/members-area': typeof AdminPlatformMembersAreaRoute
+  '/admin/products/report': typeof AdminProductsReportRoute
+  '/admin/reports': typeof AdminReportsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin/configurations': typeof AdminConfigurationsRoute
-  '/admin/enrollments': typeof AdminEnrollmentsRoute
-  '/admin/members': typeof AdminMembersRoute
+  '/admin/enrollments/report': typeof AdminEnrollmentsReportRoute
+  '/admin/groups/report': typeof AdminGroupsReportRoute
+  '/admin/members/colums': typeof AdminMembersColumsRoute
+  '/admin/members/data-table': typeof AdminMembersDataTableRoute
+  '/admin/members/report': typeof AdminMembersReportRoute
+  '/admin/platform/configurations': typeof AdminPlatformConfigurationsRoute
+  '/admin/platform/members-area': typeof AdminPlatformMembersAreaRoute
+  '/admin/products/report': typeof AdminProductsReportRoute
+  '/admin/reports/': typeof AdminReportsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/admin/configurations'
-    | '/admin/enrollments'
-    | '/admin/members'
+    | '/admin/enrollments/report'
+    | '/admin/groups/report'
+    | '/admin/members/colums'
+    | '/admin/members/data-table'
+    | '/admin/members/report'
+    | '/admin/platform/configurations'
+    | '/admin/platform/members-area'
+    | '/admin/products/report'
+    | '/admin/reports'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin/configurations' | '/admin/enrollments' | '/admin/members'
+  to:
+    | '/'
+    | '/admin/enrollments/report'
+    | '/admin/groups/report'
+    | '/admin/members/colums'
+    | '/admin/members/data-table'
+    | '/admin/members/report'
+    | '/admin/platform/configurations'
+    | '/admin/platform/members-area'
+    | '/admin/products/report'
+    | '/admin/reports'
   id:
     | '__root__'
     | '/'
-    | '/admin/configurations'
-    | '/admin/enrollments'
-    | '/admin/members'
+    | '/admin/enrollments/report'
+    | '/admin/groups/report'
+    | '/admin/members/colums'
+    | '/admin/members/data-table'
+    | '/admin/members/report'
+    | '/admin/platform/configurations'
+    | '/admin/platform/members-area'
+    | '/admin/products/report'
+    | '/admin/reports/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminConfigurationsRoute: typeof AdminConfigurationsRoute
-  AdminEnrollmentsRoute: typeof AdminEnrollmentsRoute
-  AdminMembersRoute: typeof AdminMembersRoute
+  AdminEnrollmentsReportRoute: typeof AdminEnrollmentsReportRoute
+  AdminGroupsReportRoute: typeof AdminGroupsReportRoute
+  AdminMembersColumsRoute: typeof AdminMembersColumsRoute
+  AdminMembersDataTableRoute: typeof AdminMembersDataTableRoute
+  AdminMembersReportRoute: typeof AdminMembersReportRoute
+  AdminPlatformConfigurationsRoute: typeof AdminPlatformConfigurationsRoute
+  AdminPlatformMembersAreaRoute: typeof AdminPlatformMembersAreaRoute
+  AdminProductsReportRoute: typeof AdminProductsReportRoute
+  AdminReportsIndexRoute: typeof AdminReportsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -87,25 +171,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/members': {
-      id: '/admin/members'
-      path: '/admin/members'
-      fullPath: '/admin/members'
-      preLoaderRoute: typeof AdminMembersRouteImport
+    '/admin/reports/': {
+      id: '/admin/reports/'
+      path: '/admin/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AdminReportsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/enrollments': {
-      id: '/admin/enrollments'
-      path: '/admin/enrollments'
-      fullPath: '/admin/enrollments'
-      preLoaderRoute: typeof AdminEnrollmentsRouteImport
+    '/admin/products/report': {
+      id: '/admin/products/report'
+      path: '/admin/products/report'
+      fullPath: '/admin/products/report'
+      preLoaderRoute: typeof AdminProductsReportRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/configurations': {
-      id: '/admin/configurations'
-      path: '/admin/configurations'
-      fullPath: '/admin/configurations'
-      preLoaderRoute: typeof AdminConfigurationsRouteImport
+    '/admin/platform/members-area': {
+      id: '/admin/platform/members-area'
+      path: '/admin/platform/members-area'
+      fullPath: '/admin/platform/members-area'
+      preLoaderRoute: typeof AdminPlatformMembersAreaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/platform/configurations': {
+      id: '/admin/platform/configurations'
+      path: '/admin/platform/configurations'
+      fullPath: '/admin/platform/configurations'
+      preLoaderRoute: typeof AdminPlatformConfigurationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/members/report': {
+      id: '/admin/members/report'
+      path: '/admin/members/report'
+      fullPath: '/admin/members/report'
+      preLoaderRoute: typeof AdminMembersReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/members/data-table': {
+      id: '/admin/members/data-table'
+      path: '/admin/members/data-table'
+      fullPath: '/admin/members/data-table'
+      preLoaderRoute: typeof AdminMembersDataTableRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/members/colums': {
+      id: '/admin/members/colums'
+      path: '/admin/members/colums'
+      fullPath: '/admin/members/colums'
+      preLoaderRoute: typeof AdminMembersColumsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/groups/report': {
+      id: '/admin/groups/report'
+      path: '/admin/groups/report'
+      fullPath: '/admin/groups/report'
+      preLoaderRoute: typeof AdminGroupsReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/enrollments/report': {
+      id: '/admin/enrollments/report'
+      path: '/admin/enrollments/report'
+      fullPath: '/admin/enrollments/report'
+      preLoaderRoute: typeof AdminEnrollmentsReportRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -113,9 +239,15 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminConfigurationsRoute: AdminConfigurationsRoute,
-  AdminEnrollmentsRoute: AdminEnrollmentsRoute,
-  AdminMembersRoute: AdminMembersRoute,
+  AdminEnrollmentsReportRoute: AdminEnrollmentsReportRoute,
+  AdminGroupsReportRoute: AdminGroupsReportRoute,
+  AdminMembersColumsRoute: AdminMembersColumsRoute,
+  AdminMembersDataTableRoute: AdminMembersDataTableRoute,
+  AdminMembersReportRoute: AdminMembersReportRoute,
+  AdminPlatformConfigurationsRoute: AdminPlatformConfigurationsRoute,
+  AdminPlatformMembersAreaRoute: AdminPlatformMembersAreaRoute,
+  AdminProductsReportRoute: AdminProductsReportRoute,
+  AdminReportsIndexRoute: AdminReportsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

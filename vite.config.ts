@@ -8,14 +8,10 @@ import { resolve } from 'node:path'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    tanstackRouter({ autoCodeSplitting: true }),
+    tanstackRouter({ autoCodeSplitting: true, routeFileIgnorePrefix: '_' }),
     viteReact(),
     tailwindcss(),
   ],
-  test: {
-    globals: true,
-    environment: 'jsdom',
-  },
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
