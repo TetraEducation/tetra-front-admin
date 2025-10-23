@@ -52,22 +52,30 @@ export function useTenantContext() {
   };
 }
 
-// Hook antigo para compatibilidade (usado no AdministrativeHome)
+// Hook para listar tenants (usado no AdministrativeHome)
 export function useTenants() {
   const [tenants, setTenants] = useState<Array<{id: string; name: string; slug: string}>>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
-  // Mock simples para não quebrar
   useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setTenants([
-        { id: '1', name: 'Cliente Alpha', slug: 'tenant-alpha' },
-        { id: '2', name: 'Cliente Beta', slug: 'tenant-beta' },
-      ]);
-      setLoading(false);
-    }, 1000);
+    // Busca lista de tenants da API real
+    const fetchTenantsFromAPI = async () => {
+      try {
+        setLoading(true);
+        const { fetchTenants } = await import('@/lib/apiTenants');
+        const data = await fetchTenants();
+        setTenants(data);
+      } catch (err) {
+        console.error('Erro ao buscar tenants:', err);
+        setError(err as Error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTenantsFromAPI();
   }, []);
 
-  return { tenants, loading };
+  return { tenants, loading, error };
 }

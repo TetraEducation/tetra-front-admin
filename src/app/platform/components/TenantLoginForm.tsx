@@ -14,7 +14,7 @@ export default function TenantLoginForm({ branding }: { branding?: any }) {
       {branding?.logoUrl && <img src={branding.logoUrl} alt="logo" className="h-10 mb-4" />}
       <div>
         <label className="block text-sm">E-mail</label>
-        <Input type="email" placeholder="voce@empresa.com.br" required />
+        <Input type="email" placeholder="seu-email@empresa.com.br" required />
       </div>
       <div>
         <label className="block text-sm">Senha</label>

@@ -1,5 +1,5 @@
 import TenantLoginForm from './TenantLoginForm';
-import type { Branding } from '@/lib/apiTenants.mock';
+import type { Branding } from '@/lib/apiTenants';
 
 interface TenantLoginCenterLayoutProps {
   branding?: Branding | null;

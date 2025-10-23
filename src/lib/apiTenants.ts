@@ -25,9 +25,13 @@ const apiClient = axios.create({
 // Resolve tenantId pelo host via API tetra-tenants
 export async function resolveTenantByHost(host: string) {
   try {
-    const response = await apiClient.get('/resolve', {
+    console.log('urls.tenants', urls.tenants);
+    console.log('resolveTenantByHost', host);
+const response = await apiClient.get('/tenants/public/domains/resolve', {
       params: { host }
     });
+
+    console.log('response', response.data);
     
     return {
       tenantId: response.data.tenantId,
@@ -43,8 +47,8 @@ export async function resolveTenantByHost(host: string) {
 // Busca branding público do tenant via API tetra-tenants
 export async function fetchBranding(tenantId: string) {
   try {
-    const response = await apiClient.get(`/branding/${tenantId}`);
-    
+    const response = await apiClient.get(`/tenants/public/${tenantId}/branding`);
+    console.log('fetchBranding response', response.data);
     return {
       tenantId: response.data.tenantId,
       name: response.data.name,

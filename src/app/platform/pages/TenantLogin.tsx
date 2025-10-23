@@ -1,7 +1,7 @@
 // src/app/platform/pages/TenantLogin.tsx
 import { useEffect } from 'react';
 import { useTenantContext } from '../hooks/useTenants';
-import type { Branding } from '@/lib/apiTenants.mock';
+import type { Branding } from '@/lib/apiTenants';
 import TenantLoginLeftLayout from '../components/TenantLoginLeftLayout';
 import TenantLoginRightLayout from '../components/TenantLoginRightLayout';
 import TenantLoginCenterLayout from '../components/TenantLoginCenterLayout';

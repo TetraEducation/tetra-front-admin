@@ -4,8 +4,26 @@ import { Home, Settings, GraduationCap, Box, File, Users2, Contact, ChevronLeft,
 
 export default function TenantSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isAnimating, setIsAnimating] = useState(false)
+  const [showIcon, setShowIcon] = useState(true)
   const [showUserMenu, setShowUserMenu] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
+
+  const handleToggle = () => {
+    setIsAnimating(true)
+    setShowIcon(false) // Esconde o ícone imediatamente
+    
+    // Aguarda um pouco antes de trocar o estado (para o ícone já ter sumido)
+    setTimeout(() => {
+      setIsCollapsed(!isCollapsed)
+    }, 100)
+    
+    // Mostra o novo ícone APÓS a animação da sidebar terminar
+    setTimeout(() => {
+      setShowIcon(true)
+      setIsAnimating(false)
+    }, 550) // 500ms da animação + 50ms de margem
+  }
 
   // Mock user data - replace with actual user data from your auth system
   const user = {
@@ -58,36 +76,49 @@ export default function TenantSidebar() {
       </div>
 
       <aside
-        className={`fixed top-0 left-0 h-full bg-neutral-950 text-white shadow-2xl z-40 transition-all duration-300 ease-in-out flex flex-col ${
+        className={`fixed top-0 left-0 h-full bg-neutral-950 text-white shadow-2xl z-40 transition-all duration-500 ease-in-out flex flex-col ${
           isCollapsed ? 'w-16' : 'w-72'
         } rounded-r-xl`}
       >
         <div className={`flex items-center border-b border-emerald-800 ${
           isCollapsed ? 'justify-center p-2' : 'justify-between p-4'
         }`}>
-          {!isCollapsed && <h2 className="text-xl font-bold">Tenant</h2>}
+          {!isCollapsed && (
+            <h2 className="text-xl font-bold transition-opacity duration-300">
+              Tenant
+            </h2>
+          )}
           <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2 rounded-lg transition-colors flex items-center justify-center hover:bg-emerald-800"
+            onClick={handleToggle}
+            disabled={isAnimating}
+            className="p-2 rounded-lg flex items-center justify-center disabled:opacity-50"
             aria-label={isCollapsed ? "Expand menu" : "Collapse menu"}
           >
-            {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+            <div className={`relative w-[18px] h-[18px] transition-opacity duration-150 ${
+              showIcon ? 'opacity-100' : 'opacity-0'
+            }`}>
+              {isCollapsed ? (
+                <ChevronRight size={18} className="absolute inset-0" />
+              ) : (
+                <ChevronLeft size={18} className="absolute inset-0" />
+              )}
+            </div>
           </button>
         </div>
 
         <nav className={`flex-1 overflow-y-auto ${isCollapsed ? 'p-2' : 'p-4'}`}>
           <Link
             to="/admin"
-            className={`flex items-center gap-3 rounded-lg transition-colors mb-2 ${
-              isCollapsed ? 'justify-center p-2' : 'p-3'
-            } hover:bg-emerald-800`}
+            className={`flex items-center rounded-lg transition-colors mb-2 ${
+              isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
+            } hover:bg-emerald-800/50`}
             activeProps={{
-              className: `flex items-center gap-3 rounded-lg transition-colors mb-2 ${
-                isCollapsed ? 'justify-center p-2' : 'p-3'
+              className: `flex items-center rounded-lg transition-colors mb-2 ${
+                isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
               } bg-emerald-600 hover:bg-emerald-700`,
             }}
           >
-            <Home size={20} />
+            <Home size={20} className="flex-shrink-0" />
             {!isCollapsed && <span className="font-medium">Dashboard</span>}
           </Link>
 
@@ -101,76 +132,76 @@ export default function TenantSidebar() {
             
             <Link
               to="/admin/members"
-              className={`flex items-center gap-3 rounded-lg hover:bg-emerald-800 transition-colors mb-2 ${
-                isCollapsed ? 'justify-center p-2' : 'p-3'
+              className={`flex items-center rounded-lg hover:bg-emerald-800/50 transition-colors mb-2 ${
+                isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
               }`}
               activeProps={{
-                className: `flex items-center gap-3 p-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 transition-colors mb-2 ${
-                  isCollapsed ? 'justify-center' : ''
+                className: `flex items-center rounded-lg bg-emerald-600 hover:bg-emerald-700 transition-colors mb-2 ${
+                  isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
                 }`,
               }}
             >
-              <Contact size={20} />
+              <Contact size={20} className="flex-shrink-0" />
               {!isCollapsed && <span className="font-medium">Membros</span>}
             </Link>
 
             <Link
               to="/admin/groups"
-              className={`flex items-center gap-3 rounded-lg hover:bg-emerald-800 transition-colors mb-2 ${
-                isCollapsed ? 'justify-center p-2' : 'p-3'
+              className={`flex items-center rounded-lg hover:bg-emerald-800/50 transition-colors mb-2 ${
+                isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
               }`}
               activeProps={{
-                className: `flex items-center gap-3 p-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 transition-colors mb-2 ${
-                  isCollapsed ? 'justify-center' : ''
+                className: `flex items-center rounded-lg bg-emerald-600 hover:bg-emerald-700 transition-colors mb-2 ${
+                  isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
                 }`,
               }}
             >
-              <Users2 size={20} />
+              <Users2 size={20} className="flex-shrink-0" />
               {!isCollapsed && <span className="font-medium">Grupos</span>}
             </Link>
 
             <Link
               to="/admin/enrollments"
-              className={`flex items-center gap-3 rounded-lg hover:bg-emerald-800 transition-colors mb-2 ${
-                isCollapsed ? 'justify-center p-2' : 'p-3'
+              className={`flex items-center rounded-lg hover:bg-emerald-800/50 transition-colors mb-2 ${
+                isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
               }`}
               activeProps={{
-                className: `flex items-center gap-3 p-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 transition-colors mb-2 ${
-                  isCollapsed ? 'justify-center' : ''
+                className: `flex items-center rounded-lg bg-emerald-600 hover:bg-emerald-700 transition-colors mb-2 ${
+                  isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
                 }`,
               }}
             >
-              <GraduationCap size={20} />
+              <GraduationCap size={20} className="flex-shrink-0" />
               {!isCollapsed && <span className="font-medium">Matrículas</span>}
             </Link>
 
             <Link
               to="/admin/products"
-              className={`flex items-center gap-3 rounded-lg hover:bg-emerald-800 transition-colors mb-2 ${
-                isCollapsed ? 'justify-center p-2' : 'p-3'
+              className={`flex items-center rounded-lg hover:bg-emerald-800/50 transition-colors mb-2 ${
+                isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
               }`}
               activeProps={{
-                className: `flex items-center gap-3 p-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 transition-colors mb-2 ${
-                  isCollapsed ? 'justify-center' : ''
+                className: `flex items-center rounded-lg bg-emerald-600 hover:bg-emerald-700 transition-colors mb-2 ${
+                  isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
                 }`,
               }}
             >
-              <Box size={20} />
+              <Box size={20} className="flex-shrink-0" />
               {!isCollapsed && <span className="font-medium">Produtos</span>}
             </Link>
             
             <Link
               to="/admin/reports"
-              className={`flex items-center gap-3 rounded-lg hover:bg-emerald-800 transition-colors mb-2 ${
-                isCollapsed ? 'justify-center p-2' : 'p-3'
+              className={`flex items-center rounded-lg hover:bg-emerald-800/50 transition-colors mb-2 ${
+                isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
               }`}
               activeProps={{
-                className: `flex items-center gap-3 p-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 transition-colors mb-2 ${
-                  isCollapsed ? 'justify-center' : ''
+                className: `flex items-center rounded-lg bg-emerald-600 hover:bg-emerald-700 transition-colors mb-2 ${
+                  isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
                 }`,
               }}
             >
-              <File size={20} />
+              <File size={20} className="flex-shrink-0" />
               {!isCollapsed && <span className="font-medium">Relatórios</span>}
             </Link>
           </div>
@@ -182,16 +213,16 @@ export default function TenantSidebar() {
             )}
             <Link
               to="/admin/settings"
-              className={`flex items-center gap-3 rounded-lg hover:bg-emerald-800 transition-colors mb-2 ${
-                isCollapsed ? 'justify-center p-2' : 'p-3'
+              className={`flex items-center rounded-lg hover:bg-emerald-800/50 transition-colors mb-2 ${
+                isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
               }`}
               activeProps={{
-                className: `flex items-center gap-3 p-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 transition-colors mb-2 ${
-                  isCollapsed ? 'justify-center' : ''
+                className: `flex items-center rounded-lg bg-emerald-600 hover:bg-emerald-700 transition-colors mb-2 ${
+                  isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
                 }`,
               }}
             >
-              <Settings size={20} />
+              <Settings size={20} className="flex-shrink-0" />
               {!isCollapsed && <span className="font-medium">Configurações</span>}
             </Link>
           </div>

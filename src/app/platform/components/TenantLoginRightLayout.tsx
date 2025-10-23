@@ -1,5 +1,5 @@
 import TenantLoginForm from './TenantLoginForm';
-import type { Branding } from '@/lib/apiTenants.mock';
+import type { Branding } from '@/lib/apiTenants';
 
 interface TenantLoginRightLayoutProps {
   branding?: Branding | null;
@@ -11,8 +11,23 @@ export default function TenantLoginRightLayout({ branding }: TenantLoginRightLay
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Branding */}
-      <div className="flex-1 bg-gradient-to-br from-emerald-500 to-blue-600 flex items-center justify-center p-8">
+      <div 
+        className="flex-1 flex items-center justify-center p-8"
+        style={{
+          backgroundColor: branding?.primaryColor || '#4F46E5',
+          backgroundImage: branding?.bgImageUrl ? `url(${branding.bgImageUrl})` : undefined,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
         <div className="text-center text-white">
+          {branding?.logoUrl && (
+            <img 
+              src={branding.logoUrl} 
+              alt="Logo" 
+              className="h-20 mx-auto mb-8 object-contain"
+            />
+          )}
           <h1 className="text-4xl font-bold mb-4">
             {branding?.title || 'Bem-vindo'}
           </h1>
