@@ -1,10 +1,10 @@
 // src/app/platform/hooks/useTenants.ts
-import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { resolveTenantByHost, fetchBranding, type Branding } from '@/lib/apiTenants';
+import { resolveTenantByHost, fetchBranding, fetchTenants, type Branding, type FetchTenantsParams } from '@/lib/apiTenants';
 
 const TENANT_HOST_KEY = (host: string) => ['tenant', 'resolve', host];
 const BRANDING_KEY = (tenantId?: string) => ['tenant', 'branding', tenantId];
+const TENANTS_KEY = (params: FetchTenantsParams) => ['tenants', 'list', params];
 
 export function useTenantContext() {
   const host = typeof window !== 'undefined' ? window.location.host : '';
@@ -52,30 +52,25 @@ export function useTenantContext() {
   };
 }
 
-// Hook para listar tenants (usado no AdministrativeHome)
-export function useTenants() {
-  const [tenants, setTenants] = useState<Array<{id: string; name: string; slug: string}>>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+// Hook para listar tenants com busca e filtros (usado no AdministrativeHome)
+export function useTenants(params: FetchTenantsParams = {}) {
+  return useQuery({
+    queryKey: TENANTS_KEY(params),
+    queryFn: () => fetchTenants(params),
+    staleTime: 30_000, // 30 segundos
+    gcTime: 5 * 60_000, // 5 minutos
+    retry: 2,
+  });
+}
 
-  useEffect(() => {
-    // Busca lista de tenants da API real
-    const fetchTenantsFromAPI = async () => {
-      try {
-        setLoading(true);
-        const { fetchTenants } = await import('@/lib/apiTenants');
-        const data = await fetchTenants();
-        setTenants(data);
-      } catch (err) {
-        console.error('Erro ao buscar tenants:', err);
-        setError(err as Error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTenantsFromAPI();
-  }, []);
-
-  return { tenants, loading, error };
+// Hook para busca manual (sem debounce)
+export function useTenantsSearch(searchTerm: string, statusFilter: string = 'all') {
+  const params: FetchTenantsParams = {
+    search: searchTerm || undefined,
+    status: statusFilter === 'all' ? undefined : statusFilter as any,
+    page: 1,
+    limit: 50, // Limite maior para busca
+  };
+  
+  return useTenants(params);
 }

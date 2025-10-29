@@ -7,7 +7,7 @@ interface TenantLoginLeftLayoutProps {
   host: string;
 }
 
-export default function TenantLoginLeftLayout({ branding }: TenantLoginLeftLayoutProps) {
+export default function TenantLoginLeftLayout({ branding, tenantId }: TenantLoginLeftLayoutProps) {
 
     console.log('TenantLoginLeftLayout branding', branding);
   return (
@@ -15,7 +15,7 @@ export default function TenantLoginLeftLayout({ branding }: TenantLoginLeftLayou
       {/* Left Side - Form */}
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
-          <TenantLoginForm branding={branding} />
+          <TenantLoginForm branding={branding} tenantId={tenantId} />
         </div>
       </div>
       

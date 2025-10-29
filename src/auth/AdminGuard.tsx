@@ -13,6 +13,14 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
   const [ok, setOk] = useState(false);
   const [checking, setChecking] = useState(true);
 
+  // Determina a rota de login baseada no domínio
+  const getLoginRoute = () => {
+    const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+    // Se for domínio de tenant (.tetraeducacao.com.br), redireciona para /login
+    // Se for localhost ou outro, redireciona para /administrative-panel
+    return hostname.includes('.tetraeducacao.com.br') ? '/login' : '/administrative-panel';
+  };
+
   useEffect(() => {
     (async () => {
       try {
@@ -29,8 +37,8 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
             setOk(true);
             return;
           } catch {
-            // Se refresh falhar, redireciona para login
-            navigate({ to: '/administrative-panel' });
+            // Se refresh falhar, redireciona para login apropriado
+            navigate({ to: getLoginRoute() });
             return;
           }
         }
@@ -45,8 +53,8 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
       } catch (err) {
         console.error('AdminGuard error:', err);
         setOk(false);
-        // Redireciona para login em caso de erro
-        navigate({ to: '/administrative-panel' });
+        // Redireciona para login apropriado em caso de erro
+        navigate({ to: getLoginRoute() });
       } finally {
         setChecking(false);
       }

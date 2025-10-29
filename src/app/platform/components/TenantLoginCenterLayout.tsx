@@ -7,7 +7,7 @@ interface TenantLoginCenterLayoutProps {
   host: string;
 }
 
-export default function TenantLoginCenterLayout({ branding }: TenantLoginCenterLayoutProps) {
+export default function TenantLoginCenterLayout({ branding, tenantId }: TenantLoginCenterLayoutProps) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-8">
       <div className="w-full max-w-md">
@@ -24,7 +24,7 @@ export default function TenantLoginCenterLayout({ branding }: TenantLoginCenterL
             </p>
           </div>
           
-          <TenantLoginForm branding={branding} />
+          <TenantLoginForm branding={branding} tenantId={tenantId} />
         </div>
       </div>
     </div>

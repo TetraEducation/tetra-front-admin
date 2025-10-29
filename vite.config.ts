@@ -35,6 +35,57 @@ export default defineConfig({
       'bradesco.tetraeducacao.com.br',
       'itau.tetraeducacao.com.br',
     ],
+    // Proxy para APIs backend (same-origin para permitir cookies SameSite=Lax)
+    // IMPORTANTE: O proxy só funciona com chamadas RELATIVAS (sem http://)
+    // Exemplo: fetch('/auth/login') → interceptado pelo proxy
+    //          fetch('http://localhost:3335/auth/login') → NÃO interceptado
+    proxy: {
+      // IAM API (autenticação, usuários, sessões)
+      // Intercepta rotas: /auth/*, /users/*, /oauth2-secure/*
+      '/auth': {
+        target: 'http://localhost:3335',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy) => {
+          proxy.on('proxyReq', (_proxyReq, req) => {
+            console.log(`[Proxy IAM] ${req.method} ${req.url} → http://localhost:3335`);
+          });
+        },
+      },
+      '/users': {
+        target: 'http://localhost:3335',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy) => {
+          proxy.on('proxyReq', (_proxyReq, req) => {
+            console.log(`[Proxy IAM] ${req.method} ${req.url} → http://localhost:3335`);
+          });
+        },
+      },
+      '/oauth2-secure': {
+        target: 'http://localhost:3335',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy) => {
+          proxy.on('proxyReq', (_proxyReq, req) => {
+            console.log(`[Proxy IAM] ${req.method} ${req.url} → http://localhost:3335`);
+          });
+        },
+      },
+      // Proxy apenas para rotas da API admin do IAM (impersonação, etc)
+      // Não intercepta /admin do frontend (dashboard)
+      '/api/admin': {
+        target: 'http://localhost:3335',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/admin/, '/admin'),
+        secure: false,
+        configure: (proxy) => {
+          proxy.on('proxyReq', (_proxyReq, req) => {
+            console.log(`[Proxy IAM Admin] ${req.method} ${req.url} → http://localhost:3335/admin`);
+          });
+        },
+      },
+    },
     // Permite que o servidor aceite requisições de qualquer host
     // Isso permite usar cliente-alpha.local, cliente-beta.local, etc
     

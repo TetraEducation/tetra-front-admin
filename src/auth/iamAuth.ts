@@ -18,7 +18,14 @@ export const iamAuth: AuthPort = {
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     const csrf = readCsrf();
     
-    const resp = await fetch(`${AUTH.iamBaseUrl}/auth/login`, {
+    // Constrói URL com tenantId como query parameter se fornecido
+    // Usa path relativo para proxy funcionar (same-origin)
+    let url = `${AUTH.iamBaseUrl}/auth/login`;
+    if (credentials.tenantId) {
+      url += `?tenantId=${credentials.tenantId}`;
+    }
+    
+    const resp = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -26,7 +33,10 @@ export const iamAuth: AuthPort = {
         ...(csrf ? { 'X-CSRF-Token': csrf } : {}),
       },
       credentials: 'include', // Importante para enviar/receber cookies
-      body: JSON.stringify(credentials),
+      body: JSON.stringify({
+        email: credentials.email,
+        password: credentials.password,
+      }),
     });
 
     if (!resp.ok) {
@@ -70,24 +80,33 @@ export const iamAuth: AuthPort = {
   },
 
   async refresh(): Promise<string> {
-    const csrf = readCsrf();
+    console.log('🔄 iamAuth.refresh() - Iniciando refresh...');
+    console.log('🌐 URL:', `${AUTH.iamBaseUrl}/oauth2-secure/token`);
+    console.log('🔑 Credentials: include (cookies serão enviados automaticamente)');
     
-    // POST /auth/refresh usando o cookie HttpOnly (refresh token)
-    const resp = await fetch(`${AUTH.iamBaseUrl}/auth/refresh`, {
+    // POST /oauth2-secure/token usando o cookie HttpOnly (refresh token opaco)
+    const resp = await fetch(`${AUTH.iamBaseUrl}/oauth2-secure/token`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        ...(csrf ? { 'X-CSRF-Token': csrf } : {}),
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
       credentials: 'include', // Envia cookie refresh automaticamente
+      body: 'grant_type=refresh_token', // Form data conforme OAuth2
     });
 
+    console.log('📡 Response status:', resp.status, resp.statusText);
+
     if (!resp.ok) {
-      throw new Error('refresh_failed');
+      const errorText = await resp.text().catch(() => 'Sem detalhes do erro');
+      console.error('❌ Refresh falhou:', errorText);
+      throw new Error(`refresh_failed: ${resp.status} ${resp.statusText}`);
     }
 
     const data = await resp.json();
-    // IAM retorna: { access_token }
+    console.log('✅ Refresh bem-sucedido, access_token recebido');
+    
+    // IAM retorna: { access_token, csrf_token, expires_in }
+    // O csrf_token já vem no cookie, mas também no response
     useAuth.getState().setAuth(data.access_token, useAuth.getState().me);
     return data.access_token as string;
   },
@@ -108,6 +127,34 @@ export const iamAuth: AuthPort = {
     });
 
     useAuth.getState().clear();
+  },
+
+  async impersonate(tenantId: string, reason: string): Promise<{ access_token: string; impersonation_id: string; expires_in: number }> {
+    const token = useAuth.getState().accessToken;
+    if (!token) {
+      throw new Error('No access token');
+    }
+
+    // Usa /api/admin para evitar conflito com rotas do frontend /admin
+    const resp = await fetch('/api/admin/impersonations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        tenantId,
+        reason,
+      }),
+    });
+
+    if (!resp.ok) {
+      const error = await resp.json().catch(() => ({ message: 'Erro ao fazer impersonação' }));
+      throw new Error(error.message || 'Erro ao fazer impersonação');
+    }
+
+    return await resp.json();
   },
 };
 

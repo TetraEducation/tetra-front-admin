@@ -142,7 +142,7 @@ export default function PlatformSidebar() {
               }}
             >
               <Building2 size={20} className="flex-shrink-0" />
-              {!isCollapsed && <span className="font-medium">Tenants</span>}
+              {!isCollapsed && <span className="font-medium">Plataformas</span>}
             </Link>
 
             <Link

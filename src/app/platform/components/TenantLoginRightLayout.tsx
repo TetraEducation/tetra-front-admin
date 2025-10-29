@@ -7,7 +7,7 @@ interface TenantLoginRightLayoutProps {
   host: string;
 }
 
-export default function TenantLoginRightLayout({ branding }: TenantLoginRightLayoutProps) {
+export default function TenantLoginRightLayout({ branding, tenantId }: TenantLoginRightLayoutProps) {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Branding */}
@@ -40,7 +40,7 @@ export default function TenantLoginRightLayout({ branding }: TenantLoginRightLay
       {/* Right Side - Form */}
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
-          <TenantLoginForm branding={branding} />
+          <TenantLoginForm branding={branding} tenantId={tenantId} />
         </div>
       </div>
     </div>
