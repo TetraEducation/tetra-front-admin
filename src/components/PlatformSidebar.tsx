@@ -1,9 +1,20 @@
 import { Link } from '@tanstack/react-router'
-import { useState, useRef } from 'react'
-import { Home, Settings, Building2, Users, BarChart3, ChevronLeft, ChevronRight, User, LogOut } from 'lucide-react'
+import { useRef, useState } from 'react'
+import {
+  Home,
+  Settings,
+  Building2,
+  Users,
+  BarChart3,
+  ChevronLeft,
+  ChevronRight,
+  User,
+  LogOut,
+} from 'lucide-react'
+import { useSidebar } from '@/contexts/SidebarContext'
 
 export default function PlatformSidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const { isCollapsed, setIsCollapsed } = useSidebar()
   const [isAnimating, setIsAnimating] = useState(false)
   const [showIcon, setShowIcon] = useState(true)
   const [showUserMenu, setShowUserMenu] = useState(false)
@@ -12,24 +23,22 @@ export default function PlatformSidebar() {
   const handleToggle = () => {
     setIsAnimating(true)
     setShowIcon(false)
-    
-    
+
     setTimeout(() => {
-      setIsCollapsed(!isCollapsed)
+      setIsCollapsed((previous) => !previous)
     }, 100)
-    
- 
+
     setTimeout(() => {
       setShowIcon(true)
       setIsAnimating(false)
-    }, 550) 
+    }, 550)
   }
 
   // Mock user data - replace with actual user data from your auth system
   const user = {
     name: "Platform Admin",
     role: "Administrador da Plataforma",
-    email: "admin@tetraeducacao.com"
+    email: "admin@tetraeducacao.com",
   }
 
   return (

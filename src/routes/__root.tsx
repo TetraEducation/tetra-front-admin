@@ -1,44 +1,79 @@
-import { Outlet, createRootRoute, useLocation } from '@tanstack/react-router'
-import { useEffect } from 'react'
-import { Toaster } from 'sonner'
+import { Outlet, createRootRoute, useLocation } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { Toaster } from "sonner";
 
-import PlatformSidebar from '@/components/PlatformSidebar'
-import TenantSidebar from '@/components/TenantSidebar'
-import { useSession } from '@/auth/useSession'
+import PlatformSidebar from "@/components/PlatformSidebar";
+import TenantSidebar from "@/components/TenantSidebar";
+import { useSession } from "@/auth/useSession";
+import { SidebarProvider, useSidebar } from "@/contexts/SidebarContext";
 
 export const Route = createRootRoute({
   component: RootComponent,
-})
+});
 
 function RootComponent() {
-  const location = useLocation()
-  const { isRestoring } = useSession() // Gerenciamento de sessão
-  
+  return (
+    <SidebarProvider>
+      <RootContent />
+    </SidebarProvider>
+  );
+}
+
+function RootContent() {
+  const location = useLocation();
+  const { isRestoring } = useSession();
+  const { isCollapsed, setActiveSidebar, activeSidebar } = useSidebar();
+
   // Atualiza o título da página baseado na rota
   useEffect(() => {
-    if (location.pathname.startsWith('/administrative-panel')) {
-      document.title = 'Painel Administrativo | Tetra Educação'
-    } else if (location.pathname === '/login' || location.pathname === '/login/') {
-      document.title = 'Login | Tetra Educação'
+    if (location.pathname.startsWith("/administrative-panel")) {
+      document.title = "Painel Administrativo | Tetra Educação";
+    } else if (
+      location.pathname === "/login" ||
+      location.pathname === "/login/"
+    ) {
+      document.title = "Login | Tetra Educação";
     } else {
-      document.title = 'Tetra Educação'
+      document.title = "Tetra Educação";
     }
-  }, [location.pathname])
-  
+  }, [location.pathname]);
+
   // Páginas que NÃO devem mostrar sidebar
-  const isLoginPage = 
-    location.pathname === '/login' || 
-    location.pathname === '/login/' || 
-    location.pathname === '/administrative-panel' ||
-    location.pathname === '/administrative-panel/'
-  
+  const isLoginPage =
+    location.pathname === "/login" ||
+    location.pathname === "/login/" ||
+    location.pathname === "/administrative-panel" ||
+    location.pathname === "/administrative-panel/";
+
   // Determinar qual sidebar mostrar baseado na rota
-  // IMPORTANTE: Prioridade para Platform (verifica primeiro)
-  const isPlatformRoute = location.pathname.startsWith('/administrative-panel') && !isLoginPage
-  const isTenantRoute = !isPlatformRoute && (location.pathname.startsWith('/admin') || location.pathname === '/') && !isLoginPage
-  
+  const isPlatformRoute =
+    location.pathname.startsWith("/administrative-panel") && !isLoginPage;
+  const isTenantRoute =
+    !isPlatformRoute &&
+    (location.pathname.startsWith("/admin") || location.pathname === "/") &&
+    !isLoginPage;
+
+  useEffect(() => {
+    if (isPlatformRoute) {
+      setActiveSidebar("platform");
+    } else if (isTenantRoute) {
+      setActiveSidebar("tenant");
+    } else {
+      setActiveSidebar(null);
+    }
+  }, [isPlatformRoute, isTenantRoute, setActiveSidebar]);
+
   // Determina se deve mostrar sidebar
-  const showSidebar = isPlatformRoute || isTenantRoute
+  const showSidebar = isPlatformRoute || isTenantRoute;
+
+  // Margem dinâmica baseada no estado da sidebar
+  // Tenant: w-16 (collapsed) ou w-72 (expanded)
+  // Platform: sempre w-72
+  const sidebarMargin = showSidebar
+    ? isCollapsed && activeSidebar !== null
+      ? "ml-16"
+      : "ml-72"
+    : "";
 
   // Mostra loading enquanto restaura sessão
   if (isRestoring) {
@@ -49,28 +84,30 @@ function RootComponent() {
           <p className="text-gray-600">Restaurando sessão...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <>
       {/* Toast Notifications */}
-      <Toaster 
-        position="top-right" 
-        richColors 
+      <Toaster
+        position="top-right"
+        richColors
         expand={true}
         closeButton
         duration={5000}
       />
-      
+
       {/* Renderiza APENAS UMA sidebar por vez */}
       {isPlatformRoute && <PlatformSidebar />}
       {isTenantRoute && <TenantSidebar />}
-      
-      {/* Main content with sidebar spacing */}
-      <div className={`transition-all duration-500 ease-in-out ${showSidebar ? 'ml-72' : ''}`}>
+
+      {/* Main content with dynamic sidebar spacing */}
+      <div
+        className={`transition-all duration-500 ease-in-out ${sidebarMargin}`}
+      >
         <Outlet />
       </div>
     </>
-  )
+  );
 }
