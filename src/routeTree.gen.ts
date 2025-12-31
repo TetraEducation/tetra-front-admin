@@ -15,10 +15,15 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoginIndexRouteImport } from './routes/login.index'
 import { Route as AdministrativePanelIndexRouteImport } from './routes/administrative-panel.index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdministrativePanelUsersRouteImport } from './routes/administrative-panel.users'
+import { Route as AdministrativePanelTenantsRouteImport } from './routes/administrative-panel.tenants'
+import { Route as AdministrativePanelSettingsRouteImport } from './routes/administrative-panel.settings'
 import { Route as AdministrativePanelHomeRouteImport } from './routes/administrative-panel.home'
+import { Route as AdministrativePanelAnalyticsRouteImport } from './routes/administrative-panel.analytics'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminReportsRouteImport } from './routes/admin/reports'
 import { Route as AdminProductsRouteImport } from './routes/admin/products'
+import { Route as AdminMembersAreaRouteImport } from './routes/admin/members-area'
 import { Route as AdminMembersRouteImport } from './routes/admin/members'
 import { Route as AdminGroupsRouteImport } from './routes/admin/groups'
 import { Route as AdminEnrollmentsRouteImport } from './routes/admin/enrollments'
@@ -54,11 +59,35 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdministrativePanelUsersRoute =
+  AdministrativePanelUsersRouteImport.update({
+    id: '/users',
+    path: '/users',
+    getParentRoute: () => AdministrativePanelRoute,
+  } as any)
+const AdministrativePanelTenantsRoute =
+  AdministrativePanelTenantsRouteImport.update({
+    id: '/tenants',
+    path: '/tenants',
+    getParentRoute: () => AdministrativePanelRoute,
+  } as any)
+const AdministrativePanelSettingsRoute =
+  AdministrativePanelSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AdministrativePanelRoute,
+  } as any)
 const AdministrativePanelHomeRoute = AdministrativePanelHomeRouteImport.update({
   id: '/home',
   path: '/home',
   getParentRoute: () => AdministrativePanelRoute,
 } as any)
+const AdministrativePanelAnalyticsRoute =
+  AdministrativePanelAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => AdministrativePanelRoute,
+  } as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -72,6 +101,11 @@ const AdminReportsRoute = AdminReportsRouteImport.update({
 const AdminProductsRoute = AdminProductsRouteImport.update({
   id: '/products',
   path: '/products',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMembersAreaRoute = AdminMembersAreaRouteImport.update({
+  id: '/members-area',
+  path: '/members-area',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminMembersRoute = AdminMembersRouteImport.update({
@@ -97,10 +131,15 @@ export interface FileRoutesByFullPath {
   '/admin/enrollments': typeof AdminEnrollmentsRoute
   '/admin/groups': typeof AdminGroupsRoute
   '/admin/members': typeof AdminMembersRoute
+  '/admin/members-area': typeof AdminMembersAreaRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/administrative-panel/analytics': typeof AdministrativePanelAnalyticsRoute
   '/administrative-panel/home': typeof AdministrativePanelHomeRoute
+  '/administrative-panel/settings': typeof AdministrativePanelSettingsRoute
+  '/administrative-panel/tenants': typeof AdministrativePanelTenantsRoute
+  '/administrative-panel/users': typeof AdministrativePanelUsersRoute
   '/admin/': typeof AdminIndexRoute
   '/administrative-panel/': typeof AdministrativePanelIndexRoute
   '/login': typeof LoginIndexRoute
@@ -110,10 +149,15 @@ export interface FileRoutesByTo {
   '/admin/enrollments': typeof AdminEnrollmentsRoute
   '/admin/groups': typeof AdminGroupsRoute
   '/admin/members': typeof AdminMembersRoute
+  '/admin/members-area': typeof AdminMembersAreaRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/administrative-panel/analytics': typeof AdministrativePanelAnalyticsRoute
   '/administrative-panel/home': typeof AdministrativePanelHomeRoute
+  '/administrative-panel/settings': typeof AdministrativePanelSettingsRoute
+  '/administrative-panel/tenants': typeof AdministrativePanelTenantsRoute
+  '/administrative-panel/users': typeof AdministrativePanelUsersRoute
   '/admin': typeof AdminIndexRoute
   '/administrative-panel': typeof AdministrativePanelIndexRoute
   '/login': typeof LoginIndexRoute
@@ -126,10 +170,15 @@ export interface FileRoutesById {
   '/admin/enrollments': typeof AdminEnrollmentsRoute
   '/admin/groups': typeof AdminGroupsRoute
   '/admin/members': typeof AdminMembersRoute
+  '/admin/members-area': typeof AdminMembersAreaRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/administrative-panel/analytics': typeof AdministrativePanelAnalyticsRoute
   '/administrative-panel/home': typeof AdministrativePanelHomeRoute
+  '/administrative-panel/settings': typeof AdministrativePanelSettingsRoute
+  '/administrative-panel/tenants': typeof AdministrativePanelTenantsRoute
+  '/administrative-panel/users': typeof AdministrativePanelUsersRoute
   '/admin/': typeof AdminIndexRoute
   '/administrative-panel/': typeof AdministrativePanelIndexRoute
   '/login/': typeof LoginIndexRoute
@@ -143,10 +192,15 @@ export interface FileRouteTypes {
     | '/admin/enrollments'
     | '/admin/groups'
     | '/admin/members'
+    | '/admin/members-area'
     | '/admin/products'
     | '/admin/reports'
     | '/admin/settings'
+    | '/administrative-panel/analytics'
     | '/administrative-panel/home'
+    | '/administrative-panel/settings'
+    | '/administrative-panel/tenants'
+    | '/administrative-panel/users'
     | '/admin/'
     | '/administrative-panel/'
     | '/login'
@@ -156,10 +210,15 @@ export interface FileRouteTypes {
     | '/admin/enrollments'
     | '/admin/groups'
     | '/admin/members'
+    | '/admin/members-area'
     | '/admin/products'
     | '/admin/reports'
     | '/admin/settings'
+    | '/administrative-panel/analytics'
     | '/administrative-panel/home'
+    | '/administrative-panel/settings'
+    | '/administrative-panel/tenants'
+    | '/administrative-panel/users'
     | '/admin'
     | '/administrative-panel'
     | '/login'
@@ -171,10 +230,15 @@ export interface FileRouteTypes {
     | '/admin/enrollments'
     | '/admin/groups'
     | '/admin/members'
+    | '/admin/members-area'
     | '/admin/products'
     | '/admin/reports'
     | '/admin/settings'
+    | '/administrative-panel/analytics'
     | '/administrative-panel/home'
+    | '/administrative-panel/settings'
+    | '/administrative-panel/tenants'
+    | '/administrative-panel/users'
     | '/admin/'
     | '/administrative-panel/'
     | '/login/'
@@ -231,11 +295,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/administrative-panel/users': {
+      id: '/administrative-panel/users'
+      path: '/users'
+      fullPath: '/administrative-panel/users'
+      preLoaderRoute: typeof AdministrativePanelUsersRouteImport
+      parentRoute: typeof AdministrativePanelRoute
+    }
+    '/administrative-panel/tenants': {
+      id: '/administrative-panel/tenants'
+      path: '/tenants'
+      fullPath: '/administrative-panel/tenants'
+      preLoaderRoute: typeof AdministrativePanelTenantsRouteImport
+      parentRoute: typeof AdministrativePanelRoute
+    }
+    '/administrative-panel/settings': {
+      id: '/administrative-panel/settings'
+      path: '/settings'
+      fullPath: '/administrative-panel/settings'
+      preLoaderRoute: typeof AdministrativePanelSettingsRouteImport
+      parentRoute: typeof AdministrativePanelRoute
+    }
     '/administrative-panel/home': {
       id: '/administrative-panel/home'
       path: '/home'
       fullPath: '/administrative-panel/home'
       preLoaderRoute: typeof AdministrativePanelHomeRouteImport
+      parentRoute: typeof AdministrativePanelRoute
+    }
+    '/administrative-panel/analytics': {
+      id: '/administrative-panel/analytics'
+      path: '/analytics'
+      fullPath: '/administrative-panel/analytics'
+      preLoaderRoute: typeof AdministrativePanelAnalyticsRouteImport
       parentRoute: typeof AdministrativePanelRoute
     }
     '/admin/settings': {
@@ -257,6 +349,13 @@ declare module '@tanstack/react-router' {
       path: '/products'
       fullPath: '/admin/products'
       preLoaderRoute: typeof AdminProductsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/members-area': {
+      id: '/admin/members-area'
+      path: '/members-area'
+      fullPath: '/admin/members-area'
+      preLoaderRoute: typeof AdminMembersAreaRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/members': {
@@ -287,6 +386,7 @@ interface AdminRouteChildren {
   AdminEnrollmentsRoute: typeof AdminEnrollmentsRoute
   AdminGroupsRoute: typeof AdminGroupsRoute
   AdminMembersRoute: typeof AdminMembersRoute
+  AdminMembersAreaRoute: typeof AdminMembersAreaRoute
   AdminProductsRoute: typeof AdminProductsRoute
   AdminReportsRoute: typeof AdminReportsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
@@ -297,6 +397,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEnrollmentsRoute: AdminEnrollmentsRoute,
   AdminGroupsRoute: AdminGroupsRoute,
   AdminMembersRoute: AdminMembersRoute,
+  AdminMembersAreaRoute: AdminMembersAreaRoute,
   AdminProductsRoute: AdminProductsRoute,
   AdminReportsRoute: AdminReportsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
@@ -306,12 +407,20 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AdministrativePanelRouteChildren {
+  AdministrativePanelAnalyticsRoute: typeof AdministrativePanelAnalyticsRoute
   AdministrativePanelHomeRoute: typeof AdministrativePanelHomeRoute
+  AdministrativePanelSettingsRoute: typeof AdministrativePanelSettingsRoute
+  AdministrativePanelTenantsRoute: typeof AdministrativePanelTenantsRoute
+  AdministrativePanelUsersRoute: typeof AdministrativePanelUsersRoute
   AdministrativePanelIndexRoute: typeof AdministrativePanelIndexRoute
 }
 
 const AdministrativePanelRouteChildren: AdministrativePanelRouteChildren = {
+  AdministrativePanelAnalyticsRoute: AdministrativePanelAnalyticsRoute,
   AdministrativePanelHomeRoute: AdministrativePanelHomeRoute,
+  AdministrativePanelSettingsRoute: AdministrativePanelSettingsRoute,
+  AdministrativePanelTenantsRoute: AdministrativePanelTenantsRoute,
+  AdministrativePanelUsersRoute: AdministrativePanelUsersRoute,
   AdministrativePanelIndexRoute: AdministrativePanelIndexRoute,
 }
 
