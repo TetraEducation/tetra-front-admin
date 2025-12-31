@@ -49,13 +49,15 @@ function RootContent() {
     location.pathname === "/administrative/";
 
   // Determinar qual sidebar mostrar baseado na rota E hostname
+  // IMPORTANTE: Não mostrar sidebar na página de login
   const isPlatformRoute =
-    isAdminHost || // Se for admin.tetraeducacao.com.br, sempre é plataforma
-    (location.pathname.startsWith("/administrative") && !isLoginPage);
+    !isLoginPage && // Não mostrar na página de login
+    (isAdminHost || // Se for admin.tetraeducacao.com.br, sempre é plataforma
+    location.pathname.startsWith("/administrative"));
   const isTenantRoute =
+    !isLoginPage && // Não mostrar na página de login
     !isPlatformRoute &&
-    (location.pathname.startsWith("/admin") || location.pathname === "/") &&
-    !isLoginPage;
+    (location.pathname.startsWith("/admin") || location.pathname === "/");
 
   useEffect(() => {
     if (isPlatformRoute) {
@@ -67,8 +69,8 @@ function RootContent() {
     }
   }, [isPlatformRoute, isTenantRoute, setActiveSidebar]);
 
-  // Determina se deve mostrar sidebar
-  const showSidebar = isPlatformRoute || isTenantRoute;
+  // Determina se deve mostrar sidebar (nunca mostrar na página de login)
+  const showSidebar = !isLoginPage && (isPlatformRoute || isTenantRoute);
 
   // Margem dinâmica baseada no estado da sidebar
   // Tenant: w-16 (collapsed) ou w-72 (expanded)
@@ -102,9 +104,9 @@ function RootContent() {
         duration={5000}
       />
 
-      {/* Renderiza APENAS UMA sidebar por vez */}
-      {isPlatformRoute && <PlatformSidebar />}
-      {isTenantRoute && <TenantSidebar />}
+      {/* Renderiza APENAS UMA sidebar por vez (nunca na página de login) */}
+      {showSidebar && isPlatformRoute && <PlatformSidebar />}
+      {showSidebar && isTenantRoute && <TenantSidebar />}
 
       {/* Main content with dynamic sidebar spacing */}
       <div
