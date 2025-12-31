@@ -24,9 +24,12 @@ function RootContent() {
   const { isRestoring } = useSession();
   const { isCollapsed, setActiveSidebar, activeSidebar } = useSidebar();
 
+  const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+  const isAdminHost = hostname === 'admin.tetraeducacao.com.br';
+
   // Atualiza o título da página baseado na rota
   useEffect(() => {
-    if (location.pathname.startsWith("/administrative-panel")) {
+    if (location.pathname.startsWith("/administrative")) {
       document.title = "Painel Administrativo | Tetra Educação";
     } else if (
       location.pathname === "/login" ||
@@ -42,12 +45,13 @@ function RootContent() {
   const isLoginPage =
     location.pathname === "/login" ||
     location.pathname === "/login/" ||
-    location.pathname === "/administrative-panel" ||
-    location.pathname === "/administrative-panel/";
+    location.pathname === "/administrative" ||
+    location.pathname === "/administrative/";
 
-  // Determinar qual sidebar mostrar baseado na rota
+  // Determinar qual sidebar mostrar baseado na rota E hostname
   const isPlatformRoute =
-    location.pathname.startsWith("/administrative-panel") && !isLoginPage;
+    isAdminHost || // Se for admin.tetraeducacao.com.br, sempre é plataforma
+    (location.pathname.startsWith("/administrative") && !isLoginPage);
   const isTenantRoute =
     !isPlatformRoute &&
     (location.pathname.startsWith("/admin") || location.pathname === "/") &&

@@ -17,8 +17,13 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
   const getLoginRoute = () => {
     const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
     // Se for domínio de tenant (.tetraeducacao.com.br), redireciona para /login
-    // Se for localhost ou outro, redireciona para /administrative-panel
-    return hostname.includes('.tetraeducacao.com.br') ? '/login' : '/administrative-panel';
+    // Se for admin.tetraeducacao.com.br, redireciona para /administrative
+    // Se for outro .tetraeducacao.com.br, redireciona para /login
+    // Se for localhost, redireciona para /administrative
+    if (hostname === 'admin.tetraeducacao.com.br') {
+      return '/administrative';
+    }
+    return hostname.includes('.tetraeducacao.com.br') ? '/login' : '/administrative';
   };
 
   useEffect(() => {

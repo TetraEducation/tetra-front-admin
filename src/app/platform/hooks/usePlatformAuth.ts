@@ -80,9 +80,9 @@ export function usePlatformAuth() {
     const currentKey = getCookie("platform-key");
     if (!currentKey) return { type: "internal", url: "/login" }; // sem cookie: volta pro login
 
-    // super-admin => /administrative-panel (área da nossa plataforma)
+    // super-admin => /administrative (área da nossa plataforma)
     if (currentKey === PLATFORM_ADMIN_KEY) {
-      return { type: "internal", url: "/administrative-panel/home" };
+      return { type: "internal", url: "/administrative/home" };
     }
 
     // se key for um tenant, checar role atual:

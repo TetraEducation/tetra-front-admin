@@ -1,7 +1,7 @@
-// src/routes/administrative-panel.settings.tsx
+// src/routes/administrative.settings.tsx
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/administrative-panel/settings')({
+export const Route = createFileRoute('/administrative/settings')({
   component: () => (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
       <div className="max-w-7xl mx-auto">

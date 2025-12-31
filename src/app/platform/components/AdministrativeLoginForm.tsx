@@ -31,7 +31,7 @@ export default function AdministrativeLoginForm() {
       }
 
       // Redireciona para home
-      navigate({ to: '/administrative-panel/home' });
+      navigate({ to: '/administrative/home' });
     } catch (err) {
       console.error('Erro no login:', err);
       setError(err instanceof Error ? err.message : 'Credenciais inválidas');

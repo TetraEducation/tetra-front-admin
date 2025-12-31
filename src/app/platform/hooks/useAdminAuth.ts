@@ -32,7 +32,7 @@ export function useRequireAdminAuth() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate({ to: '/administrative-panel' });
+      navigate({ to: '/administrative' });
     }
   }, [isAuthenticated, navigate]);
 

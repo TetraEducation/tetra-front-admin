@@ -1,7 +1,7 @@
 // src/auth/TenantGuard.tsx
 // Guard para proteger rotas do tenant (/admin)
 // Só verifica se está autenticado, NÃO verifica platformAccess
-// platformAccess === 'ADMIN' só é necessário para /administrative-panel
+// platformAccess === 'ADMIN' só é necessário para /administrative
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";

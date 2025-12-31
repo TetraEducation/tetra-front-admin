@@ -41,7 +41,7 @@ export function AdministrativeHome() {
         {/* Cards de Ações */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           <Link
-            to="/administrative-panel/tenants"
+            to="/administrative/tenants"
             className="group p-6 bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-300 transition-all"
           >
             <div className="flex items-start space-x-4">

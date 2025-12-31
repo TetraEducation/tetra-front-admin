@@ -8,8 +8,12 @@ const TENANTS_KEY = (params: FetchTenantsParams) => ['tenants', 'list', params];
 
 export function useTenantContext() {
   const host = typeof window !== 'undefined' ? window.location.host : '';
+  const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
 
-  // 1 - resolve tenantId por host via API real
+  // Se for admin.tetraeducacao.com.br, não tenta resolver tenant
+  const isAdminHost = hostname === 'admin.tetraeducacao.com.br';
+
+  // 1 - resolve tenantId por host via API real (apenas se não for admin)
   const resolveQuery = useQuery({
     queryKey: TENANT_HOST_KEY(host),
     queryFn: async () => {
@@ -20,12 +24,12 @@ export function useTenantContext() {
     staleTime: 60_000, // 1 minuto
     gcTime: 5 * 60_000, // gcTime substitui cacheTime no v5
     retry: false,
-    enabled: !!host,
+    enabled: !!host && !isAdminHost, // Não executa se for admin
   });
 
   const tenantId = resolveQuery.data as string | undefined;
 
-  // 2 - busca branding do tenant via API real
+  // 2 - busca branding do tenant via API real (apenas se não for admin)
   const brandingQuery = useQuery({
     queryKey: BRANDING_KEY(tenantId),
     queryFn: async () => {
@@ -33,7 +37,7 @@ export function useTenantContext() {
       const res = await fetchBranding(tenantId);
       return res.branding as Branding;
     },
-    enabled: !!tenantId,
+    enabled: !!tenantId && !isAdminHost, // Não executa se for admin
     staleTime: 60_000,
     gcTime: 10 * 60_000, // gcTime substitui cacheTime no v5
   });

@@ -1,4 +1,4 @@
-// src/routes/administrative-panel.users.tsx
+// src/routes/administrative.users.tsx
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useMemo } from 'react'
 import { DataTable, type ColumnDef } from '@/components/ui/data-table-custom'
@@ -488,6 +488,6 @@ function UsersPage() {
   )
 }
 
-export const Route = createFileRoute('/administrative-panel/users')({
+export const Route = createFileRoute('/administrative/users')({
   component: UsersPage,
 })

@@ -2,10 +2,15 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
   beforeLoad: () => {
-    // Verifica se está em um domínio de tenant
+    // Verifica se está em um domínio de tenant ou admin
     const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
     
-    // Se for qualquer domínio .tetraeducacao.com.br, redireciona para /login
+    // Se for admin.tetraeducacao.com.br → redireciona para painel administrativo
+    if (hostname === 'admin.tetraeducacao.com.br') {
+      throw redirect({ to: '/administrative' })
+    }
+    
+    // Se for qualquer outro domínio .tetraeducacao.com.br → redireciona para /login (tenant)
     if (hostname && hostname.includes('.tetraeducacao.com.br')) {
       throw redirect({ to: '/login' })
     }

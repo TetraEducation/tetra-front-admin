@@ -117,7 +117,7 @@ export default function PlatformSidebar() {
 
         <nav className={`flex-1 overflow-y-auto ${isCollapsed ? 'p-2' : 'p-4'}`}>
           <Link
-            to="/administrative-panel/home"
+            to="/administrative/home"
             className={`flex items-center rounded-lg transition-colors mb-2 ${
               isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
             } hover:bg-emerald-800/50`}
@@ -140,7 +140,7 @@ export default function PlatformSidebar() {
             )}
             
             <Link
-              to="/administrative-panel/tenants"
+              to="/administrative/tenants"
               className={`flex items-center rounded-lg hover:bg-emerald-800/50 transition-colors mb-2 ${
                 isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
               }`}
@@ -155,7 +155,7 @@ export default function PlatformSidebar() {
             </Link>
 
             <Link
-              to="/administrative-panel/users"
+              to="/administrative/users"
               className={`flex items-center rounded-lg hover:bg-emerald-800/50 transition-colors mb-2 ${
                 isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
               }`}
@@ -170,7 +170,7 @@ export default function PlatformSidebar() {
             </Link>
 
             <Link
-              to="/administrative-panel/analytics"
+              to="/administrative/analytics"
               className={`flex items-center rounded-lg hover:bg-emerald-800/50 transition-colors mb-2 ${
                 isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
               }`}
@@ -191,7 +191,7 @@ export default function PlatformSidebar() {
               <h3 className='text-sm font-semibold text-emerald-300 uppercase tracking-wider mb-3'>Configurações</h3>
             )}
             <Link
-              to="/administrative-panel/settings"
+              to="/administrative/settings"
               className={`flex items-center rounded-lg hover:bg-emerald-800/50 transition-colors mb-2 ${
                 isCollapsed ? 'justify-center p-3' : 'gap-3 p-3'
               }`}

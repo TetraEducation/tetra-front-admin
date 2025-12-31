@@ -24,17 +24,17 @@ export default function TenantLoginForm({
     setLoading(true);
 
     try {
-      // Login direto com email/senha + tenantId (diferente do administrative-panel)
+      // Login direto com email/senha + tenantId (diferente do /administrative)
       const response = await iamAuth.login({ email, password, tenantId });
 
       // Armazena token em memória
       const user = response.user || (await iamAuth.fetchMe());
       useAuth.getState().setAuth(response.access_token, user);
 
-      // Não valida platformAccess aqui - essa validação só existe no /administrative-panel
+      // Não valida platformAccess aqui - essa validação só existe no /administrative
       // Para /admin, qualquer usuário autenticado do tenant pode acessar
 
-      // Redireciona para /admin (diferente do administrative-panel que vai para /administrative-panel/home)
+      // Redireciona para /admin (diferente do /administrative que vai para /administrative/home)
       navigate({ to: "/admin" });
     } catch (err) {
       console.error("Erro no login:", err);
