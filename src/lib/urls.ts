@@ -17,5 +17,5 @@ export const urls = {
     ? "http://localhost:3335"
     : isStaging
       ? "https://staging-api.tetraeducacao.com/iam"
-      : "https://api.tetraeducacao.com/iam",
+      : "https://iam.tetraeducacao.com.br/",
 };
