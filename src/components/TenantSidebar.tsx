@@ -49,17 +49,20 @@ export default function TenantSidebar() {
   // Fechar menu ao clicar fora
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
         setShowUserMenu(false);
       }
     };
 
     if (showUserMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showUserMenu]);
 
@@ -71,12 +74,9 @@ export default function TenantSidebar() {
     <>
       {/* User Profile Avatar - Right Side */}
       <div className="fixed top-4 right-4 z-50">
-        <div
-          className="relative"
-          ref={userMenuRef}
-        >
+        <div className="relative" ref={userMenuRef}>
           {/* Avatar Button */}
-          <button 
+          <button
             onClick={toggleUserMenu}
             className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center hover:bg-emerald-700 transition-colors shadow-lg border-2 border-emerald-500"
           >
