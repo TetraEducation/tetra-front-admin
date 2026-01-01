@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   Box,
   ChevronLeft,
@@ -46,22 +46,44 @@ export default function TenantSidebar() {
     email: "admin@tenant.com",
   };
 
+  // Fechar menu ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+    };
+
+    if (showUserMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showUserMenu]);
+
+  const toggleUserMenu = () => {
+    setShowUserMenu(!showUserMenu);
+  };
+
   return (
     <>
       {/* User Profile Avatar - Right Side */}
       <div className="fixed top-4 right-4 z-50">
         <div
-          className="relative group"
+          className="relative"
           ref={userMenuRef}
-          onMouseEnter={() => setShowUserMenu(true)}
-          onMouseLeave={() => setShowUserMenu(false)}
         >
           {/* Avatar Button */}
-          <button className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center hover:bg-emerald-700 transition-colors shadow-lg border-2 border-emerald-500">
+          <button 
+            onClick={toggleUserMenu}
+            className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center hover:bg-emerald-700 transition-colors shadow-lg border-2 border-emerald-500"
+          >
             <User size={18} className="text-white" />
           </button>
 
-          {/* User Menu Dropdown - Hover */}
+          {/* User Menu Dropdown - Click */}
           {showUserMenu && (
             <div className="absolute top-full right-0 mt-2 w-64 bg-neutral-950 border border-emerald-800 rounded-lg shadow-lg overflow-hidden">
               <div className="p-4 border-b border-emerald-800">
