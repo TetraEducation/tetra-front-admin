@@ -5,6 +5,7 @@ import { AUTH } from '../config/auth';
 import { useAuth } from './authStore';
 import type { AuthPort, LoginCredentials, LoginResponse } from './ports';
 import type { Me } from './authStore';
+import { deleteCookie, setCookie } from '@/utils/cookies';
 
 function readCsrf(): string | undefined {
   // Se o IAM emitir cookie csrf=X, leia aqui p/ enviar em X-CSRF-Token
@@ -108,6 +109,10 @@ export const iamAuth: AuthPort = {
     // IAM retorna: { access_token, csrf_token, expires_in }
     // O csrf_token já vem no cookie, mas também no response
     useAuth.getState().setAuth(data.access_token, useAuth.getState().me);
+    
+    // Atualiza cookie com o novo token
+    setCookie('access_token', data.access_token, 7);
+    
     return data.access_token as string;
   },
 
@@ -126,6 +131,10 @@ export const iamAuth: AuthPort = {
       // Ignora erros de logout
     });
 
+    // Limpa cookies após logout
+    deleteCookie('access_token');
+    deleteCookie('tenant_id');
+    
     useAuth.getState().clear();
   },
 

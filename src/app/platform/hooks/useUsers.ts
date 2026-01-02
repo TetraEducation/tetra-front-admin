@@ -1,6 +1,6 @@
 // src/app/platform/hooks/useUsers.ts
 import { useQuery } from '@tanstack/react-query';
-import { fetchUsers, type FetchUsersParams } from '@/lib/apiUsers';
+import { fetchUsers, type FetchUsersParams } from '@/lib/apiIam';
 
 const USERS_KEY = (params: FetchUsersParams) => ['users', 'list', params];
 
@@ -16,8 +16,12 @@ export function useUsers(params: FetchUsersParams = {}) {
 }
 
 // Hook para busca manual (sem debounce)
-export function useUsersSearch(searchTerm: string, statusFilter: string = 'all') {
+// Se tenantId for fornecido, busca usuários do tenant específico (GET /users?tenantId=xxx)
+// Se isAdministrative for true, busca admins do sistema (GET /administrative/users)
+export function useUsersSearch(searchTerm: string, statusFilter: string = 'all', tenantId?: string, isAdministrative: boolean = false) {
   const params: FetchUsersParams = {
+    tenantId, // Se fornecido, usa GET /users?tenantId=xxx
+    isAdministrative, // Se true, usa GET /administrative/users
     search: searchTerm || undefined,
     status: statusFilter === 'all' ? undefined : (statusFilter as any),
     page: 1,

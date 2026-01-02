@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { iamAuth } from '@/auth/iamAuth';
 import { useAuth } from '@/auth/authStore';
+import { setCookie } from '@/utils/cookies';
 
 export default function AdministrativeLoginForm() {
   const navigate = useNavigate();
@@ -24,6 +25,12 @@ export default function AdministrativeLoginForm() {
       // Armazena token em memória
       const user = response.user || (await iamAuth.fetchMe());
       useAuth.getState().setAuth(response.access_token, user);
+
+      // Armazena accessToken em cookies para reutilização
+      // NOTA: Por enquanto usando cookies client-side. Em produção, considerar HttpOnly cookies do backend
+      if (response.access_token) {
+        setCookie('access_token', response.access_token, 7); // 7 dias
+      }
 
       // Valida platformAccess
       if (user.platformAccess !== 'ADMIN') {

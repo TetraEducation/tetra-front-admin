@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { iamAuth } from "@/auth/iamAuth";
 import { useAuth } from "@/auth/authStore";
+import { setCookie } from "@/utils/cookies";
 
 export default function TenantLoginForm({
   branding,
@@ -30,6 +31,15 @@ export default function TenantLoginForm({
       // Armazena token em memória
       const user = response.user || (await iamAuth.fetchMe());
       useAuth.getState().setAuth(response.access_token, user);
+
+      // Armazena accessToken e tenantId em cookies para reutilização
+      // NOTA: Por enquanto usando cookies client-side. Em produção, considerar HttpOnly cookies do backend
+      if (response.access_token) {
+        setCookie('access_token', response.access_token, 7); // 7 dias
+      }
+      if (tenantId) {
+        setCookie('tenant_id', tenantId, 30); // 30 dias (tenantId muda menos frequentemente)
+      }
 
       // Não valida platformAccess aqui - essa validação só existe no /administrative
       // Para /admin, qualquer usuário autenticado do tenant pode acessar
