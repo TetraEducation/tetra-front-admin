@@ -6,20 +6,20 @@ const isStaging = hostname.includes("staging");
 
 export const urls = {
   // URL da API de Tenants
-  // Em local: string vazia para usar proxy do Vite (/tenants → localhost:3334)
+  // Em local: /api/tenants (proxy do Vite intercepta e redireciona para localhost:3334)
   // Em staging/prod: URL completa da API
   tenants: isLocal
-    ? "" // Proxy do Vite intercepta /tenants/* → localhost:3334
+    ? "/api/tenants" // Proxy do Vite intercepta /api/tenants/* → localhost:3334
     : isStaging
       ? "https://staging-api.tetraeducacao.com/tenants"
       : "https://tenants.tetraeducacao.com.br",
 
   // URL da API de IAM
-  // Em local: string vazia para usar proxy do Vite (/auth, /users, /oauth2-secure → localhost:3335)
+  // Em local: /api/iam (proxy do Vite intercepta e redireciona para localhost:3335)
   // Em staging/prod: URL completa da API
   iam: isLocal
-    ? "" // Proxy do Vite intercepta /auth/*, /users/*, /oauth2-secure/* → localhost:3335
+    ? "/api/iam" // Proxy do Vite intercepta /api/iam/* → localhost:3335
     : isStaging
       ? "https://staging-api.tetraeducacao.com/iam"
-      : "https://iam.tetraeducacao.com.br/",
+      : "https://iam.tetraeducacao.com.br",
 };
