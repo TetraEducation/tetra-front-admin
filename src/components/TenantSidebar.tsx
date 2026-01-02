@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { useRef, useState, useEffect } from "react";
 import {
   Box,
@@ -18,10 +18,21 @@ import { useSidebar } from "../contexts/SidebarContext";
 
 export default function TenantSidebar() {
   const { isCollapsed, setIsCollapsed } = useSidebar();
+  const location = useLocation();
   const [isAnimating, setIsAnimating] = useState(false);
   const [showIcon, setShowIcon] = useState(true);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  
+  // Verifica se a rota atual corresponde exatamente (não apenas prefixo)
+  const isActiveRoute = (path: string) => {
+    const currentPath = location.pathname;
+    if (path === '/admin') {
+      // Para /admin, só está ativo se for exatamente /admin (não /admin/members, etc)
+      return currentPath === '/admin' || currentPath === '/admin/';
+    }
+    return currentPath.startsWith(path);
+  };
 
   const handleToggle = () => {
     setIsAnimating(true);
@@ -153,12 +164,11 @@ export default function TenantSidebar() {
             to="/admin"
             className={`flex items-center rounded-lg transition-colors mb-2 ${
               isCollapsed ? "justify-center p-3" : "gap-3 p-3"
-            } hover:bg-emerald-800/50`}
-            activeProps={{
-              className: `flex items-center rounded-lg transition-colors mb-2 ${
-                isCollapsed ? "justify-center p-3" : "gap-3 p-3"
-              } bg-emerald-600 hover:bg-emerald-700`,
-            }}
+            } ${
+              isActiveRoute('/admin') 
+                ? 'bg-emerald-600 hover:bg-emerald-700' 
+                : 'hover:bg-emerald-800/50'
+            }`}
           >
             <Home size={20} className="flex-shrink-0" />
             {!isCollapsed && <span className="font-medium">Dashboard</span>}
@@ -174,14 +184,13 @@ export default function TenantSidebar() {
 
             <Link
               to="/admin/members"
-              className={`flex items-center rounded-lg hover:bg-emerald-800/50 transition-colors mb-2 ${
+              className={`flex items-center rounded-lg transition-colors mb-2 ${
                 isCollapsed ? "justify-center p-3" : "gap-3 p-3"
+              } ${
+                isActiveRoute('/admin/members') 
+                  ? 'bg-emerald-600 hover:bg-emerald-700' 
+                  : 'hover:bg-emerald-800/50'
               }`}
-              activeProps={{
-                className: `flex items-center rounded-lg bg-emerald-600 hover:bg-emerald-700 transition-colors mb-2 ${
-                  isCollapsed ? "justify-center p-3" : "gap-3 p-3"
-                }`,
-              }}
             >
               <Contact size={20} className="flex-shrink-0" />
               {!isCollapsed && <span className="font-medium">Membros</span>}

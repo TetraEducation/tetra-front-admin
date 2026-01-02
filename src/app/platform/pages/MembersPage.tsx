@@ -2,11 +2,13 @@
 import { useState, useMemo, useCallback } from 'react'
 import { Users, UserPlus, Search, Filter, X, Mail, Shield, MoreVertical, Edit, Trash2, UserX, UserCheck } from 'lucide-react'
 import { useUsersSearch } from '../hooks/useUsers'
+import { useTenantContext } from '../hooks/useTenants'
 import { DataTable, type ColumnDef } from '@/components/ui/data-table-custom'
 import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
-import type { User, UserStatus, TenantRole } from '@/lib/apiUsers'
-import { UserStatusEnum, requestPasswordReset } from '@/lib/apiUsers'
+import type { User, UserStatus, TenantRole } from '@/lib/apiIam'
+import { UserStatusEnum, requestPasswordReset, registerUser, type RegisterUserParams } from '@/lib/apiIam'
+import { CreateMemberModal } from '@/components/ui/create-member-modal'
 
 const getStatusStyle = (status: UserStatus) => {
   switch (status) {
@@ -55,6 +57,7 @@ const getStatusStyle = (status: UserStatus) => {
   }
 };
 
+// Mapeamento de roles da API para nomes amigáveis no frontend
 const getRoleLabel = (role: TenantRole) => {
   switch (role) {
     case 'TENANT_OWNER':
@@ -63,10 +66,22 @@ const getRoleLabel = (role: TenantRole) => {
       return 'Administrador';
     case 'TENANT_MEMBER':
       return 'Membro';
+    case 'TENANT_INSTRUCTOR':
+      return 'Instrutor';
+    case 'TENANT_SUPPORT':
+      return 'Suporte';
     default:
       return role;
   }
 };
+
+// Mapeamento reverso: nome amigável → role da API
+export const ROLE_OPTIONS = [
+  { value: 'TENANT_ADMIN' as const, label: 'Administrador', description: 'Acesso completo à plataforma' },
+  { value: 'TENANT_MEMBER' as const, label: 'Membro', description: 'Acesso básico à plataforma' },
+  { value: 'TENANT_INSTRUCTOR' as const, label: 'Instrutor', description: 'Pode criar e gerenciar cursos' },
+  { value: 'TENANT_SUPPORT' as const, label: 'Suporte', description: 'Acesso ao suporte e atendimento' },
+] as const;
 
 const getRoleStyle = (role: TenantRole) => {
   switch (role) {
@@ -76,6 +91,10 @@ const getRoleStyle = (role: TenantRole) => {
       return 'bg-blue-100 text-blue-800';
     case 'TENANT_MEMBER':
       return 'bg-gray-100 text-gray-800';
+    case 'TENANT_INSTRUCTOR':
+      return 'bg-indigo-100 text-indigo-800';
+    case 'TENANT_SUPPORT':
+      return 'bg-cyan-100 text-cyan-800';
     default:
       return 'bg-gray-100 text-gray-800';
   }
@@ -86,19 +105,41 @@ export default function MembersPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [appliedSearch, setAppliedSearch] = useState('')
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  const [menuPosition, setMenuPosition] = useState<{ top: number; right: number } | null>(null)
   const [resettingPasswordFor, setResettingPasswordFor] = useState<string | null>(null)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isCreating, setIsCreating] = useState(false)
   const queryClient = useQueryClient()
 
-  // Usa busca real da API
-  const { data: usersResponse, isLoading, error } = useUsersSearch(appliedSearch, statusFilter)
+  // Obtém tenantId do contexto (para usar endpoint GET /users?tenantId=xxx)
+  const { tenantId } = useTenantContext()
+
+  // Usa busca real da API com tenantId (se disponível)
+  const { data: usersResponse, isLoading, error } = useUsersSearch(appliedSearch, statusFilter, tenantId)
   
   const users = usersResponse?.items || []
   const totalCount = usersResponse?.meta.total || 0
 
-  // Toggle menu
-  const toggleMenu = useCallback((userId: string) => {
-    setOpenMenuId(prev => prev === userId ? null : userId)
-  }, [])
+  // Toggle menu com cálculo de posição
+  const toggleMenu = useCallback((userId: string, event?: React.MouseEvent<HTMLButtonElement>) => {
+    if (openMenuId === userId) {
+      setOpenMenuId(null)
+      setMenuPosition(null)
+      return
+    }
+
+    // Calcula posição do menu usando fixed positioning
+    if (event) {
+      const button = event.currentTarget
+      const rect = button.getBoundingClientRect()
+      setMenuPosition({
+        top: rect.bottom + 8, // 8px abaixo do botão (mt-2 = 8px)
+        right: window.innerWidth - rect.right, // Distância da direita
+      })
+    }
+
+    setOpenMenuId(userId)
+  }, [openMenuId])
 
   // Função para aplicar busca
   const handleSearch = () => {
@@ -115,6 +156,30 @@ export default function MembersPage() {
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSearch()
+    }
+  }
+
+  // Função para criar novo membro
+  const handleCreateMember = async (data: RegisterUserParams) => {
+    setIsCreating(true)
+    try {
+      await registerUser(data)
+      toast.success('Membro criado com sucesso!', {
+        description: `${data.name} foi adicionado à plataforma`,
+      })
+      
+      // Invalida cache para atualizar a lista
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      
+      setIsCreateModalOpen(false)
+    } catch (error) {
+      console.error('Erro ao criar membro:', error)
+      toast.error('Erro ao criar membro', {
+        description: error instanceof Error ? error.message : 'Não foi possível criar o membro',
+      })
+      throw error // Re-throw para o modal tratar
+    } finally {
+      setIsCreating(false)
     }
   }
 
@@ -225,7 +290,7 @@ export default function MembersPage() {
                 onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
-                  toggleMenu(user.id)
+                  toggleMenu(user.id, e)
                 }}
                 className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                 title="Mais opções"
@@ -233,12 +298,26 @@ export default function MembersPage() {
                 <MoreVertical size={18} />
               </button>
 
-              {/* Dropdown Menu */}
+              {/* Dropdown Menu - usando fixed position para evitar problemas de scroll */}
               {isMenuOpen && (
-                <div 
-                  className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-[101]"
-                  onClick={(e) => e.stopPropagation()}
-                >
+                <>
+                  {/* Overlay para fechar ao clicar fora */}
+                  <div
+                    className="fixed inset-0 z-[100]"
+                    onClick={() => {
+                      setOpenMenuId(null)
+                      setMenuPosition(null)
+                    }}
+                  />
+                  {/* Menu dropdown */}
+                  <div 
+                    className="fixed w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-[101] max-h-[300px] overflow-y-auto"
+                    style={{
+                      top: menuPosition?.top ? `${menuPosition.top}px` : 'auto',
+                      right: menuPosition?.right ? `${menuPosition.right}px` : 'auto',
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
                   <button
                     type="button"
                     onClick={(e) => {
@@ -317,13 +396,14 @@ export default function MembersPage() {
                     Excluir
                   </button>
                 </div>
+                </>
               )}
             </div>
           </div>
         )
       },
     },
-  ], [openMenuId, toggleMenu])
+  ], [openMenuId, toggleMenu, menuPosition])
 
   // Empty state customizado
   const emptyState = (
@@ -336,7 +416,7 @@ export default function MembersPage() {
         Comece adicionando membros à sua plataforma
       </p>
       <button 
-        onClick={() => toast.info('Adicionar Membro', { description: 'Modal de criação será implementado' })}
+        onClick={() => setIsCreateModalOpen(true)}
         className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-medium transition-colors inline-flex items-center gap-2"
       >
         <UserPlus size={20} />
@@ -384,7 +464,7 @@ export default function MembersPage() {
               </p>
             </div>
             <button 
-              onClick={() => toast.info('Adicionar Membro', { description: 'Modal de criação será implementado' })}
+              onClick={() => setIsCreateModalOpen(true)}
               className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 shadow-lg hover:shadow-xl"
             >
               <UserPlus size={20} />
@@ -579,13 +659,7 @@ export default function MembersPage() {
           </div>
         </div>
 
-        {/* Overlay global para fechar menu ao clicar fora */}
-        {openMenuId && (
-          <div 
-            className="fixed inset-0 z-[100]" 
-            onClick={() => setOpenMenuId(null)}
-          />
-        )}
+        {/* Overlay global removido - agora está dentro do menu dropdown */}
 
         {/* Members Table - Componentizada */}
         <DataTable
@@ -609,6 +683,14 @@ export default function MembersPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal de Criação de Membro */}
+      <CreateMemberModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onConfirm={handleCreateMember}
+        isLoading={isCreating}
+      />
     </div>
   )
 }

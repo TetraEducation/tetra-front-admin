@@ -4,8 +4,8 @@ import { useState, useMemo } from 'react'
 import { DataTable, type ColumnDef } from '@/components/ui/data-table-custom'
 import { User, Calendar, /* Shield, */ Search, Filter, X } from 'lucide-react'
 import { useUsersSearch } from '@/app/platform/hooks/useUsers'
-import type { User as ApiUser, UserStatus } from '@/lib/apiUsers'
-import { UserStatusEnum, requestPasswordReset } from '@/lib/apiUsers'
+import type { User as ApiUser, UserStatus } from '@/lib/apiIam'
+import { UserStatusEnum, requestPasswordReset } from '@/lib/apiIam'
 import { toast } from 'sonner'
 
 // Helper para obter estilo e label do status
@@ -77,8 +77,8 @@ function UsersPage() {
   const [appliedSearch, setAppliedSearch] = useState('')
   const [resettingPasswordFor, setResettingPasswordFor] = useState<string | null>(null)
 
-  // Usa busca real da API
-  const { data: usersResponse, isLoading, error } = useUsersSearch(appliedSearch, statusFilter)
+  // Usa busca real da API (administrative users)
+  const { data: usersResponse, isLoading, error } = useUsersSearch(appliedSearch, statusFilter, undefined, true)
   
   const users = usersResponse?.items || []
   const totalCount = usersResponse?.meta.total || 0
