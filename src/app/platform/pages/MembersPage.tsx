@@ -674,7 +674,7 @@ export default function MembersPage() {
           <div className="flex items-start gap-3">
             <Shield className="text-blue-600 flex-shrink-0 mt-1" size={24} />
             <div>
-              <h3 className="font-semibold text-blue-900 mb-1">💡 Sobre Membros</h3>
+              <h3 className="font-semibold text-blue-900 mb-1">Sobre Membros</h3>
               <p className="text-blue-800 text-sm">
                 Gerencie os membros da sua plataforma, defina suas funções e permissões. 
                 Os membros podem ter diferentes níveis de acesso: Proprietário, Administrador ou Membro.

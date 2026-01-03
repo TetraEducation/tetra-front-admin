@@ -9,6 +9,11 @@ export type Me = {
   email: string;
   name?: string;
   platformAccess: 'ADMIN' | 'NONE';
+  picture_url?: string | null;
+  status?: string;
+  email_verified_at?: string | null;
+  last_login_at?: string | null;
+  tenant_role?: string | null;
 };
 
 type AuthState = {

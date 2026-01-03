@@ -8,6 +8,7 @@ import {
   MoreVertical,
   Plus,
   Search,
+  Shield,
   SquareStack,
   Target,
   Users2,
@@ -507,14 +508,19 @@ function GroupsPage() {
         />
 
         <div className="mt-8 rounded-lg border-l-4 border-emerald-500 bg-emerald-50/80 p-6 text-sm text-emerald-900">
-          <h3 className="mb-2 font-semibold">
-            💡 Dica: grupos bem estruturados aceleram liberações
+        <div className="flex items-start gap-3">
+          <Shield className="text-emerald-600 flex-shrink-0 mt-1" size={24} />
+         <div>
+         <h3 className="mb-2 font-semibold">
+           Dica: grupos bem estruturados aceleram liberações
           </h3>
           <p>
             Utilize padrões consistentes (por exemplo, “Equipe · Objetivo”) para
             nomear os grupos e manter permissões alinhadas entre times de
             suporte, conteúdo e comercial.
           </p>
+          </div>
+         </div>
         </div>
 
         {/* Modal placeholder */}
