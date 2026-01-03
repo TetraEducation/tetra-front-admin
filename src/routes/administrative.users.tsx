@@ -2,11 +2,13 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useMemo } from 'react'
 import { DataTable, type ColumnDef } from '@/components/ui/data-table-custom'
-import { User, Calendar, /* Shield, */ Search, Filter, X } from 'lucide-react'
+import { User, Calendar, /* Shield, */ Search, Filter, X, UserPlus } from 'lucide-react'
 import { useUsersSearch } from '@/app/platform/hooks/useUsers'
 import type { User as ApiUser, UserStatus } from '@/lib/apiIam'
-import { UserStatusEnum, requestPasswordReset } from '@/lib/apiIam'
+import { UserStatusEnum, requestPasswordReset, createAdministrativeUser, type CreateAdministrativeUserParams } from '@/lib/apiIam'
 import { toast } from 'sonner'
+import { useQueryClient } from '@tanstack/react-query'
+import { CreateAdministrativeUserModal } from '@/components/ui/create-administrative-user-modal'
 
 // Helper para obter estilo e label do status
 const getStatusStyle = (status: UserStatus) => {
@@ -76,6 +78,8 @@ function UsersPage() {
   const [roleFilter, setRoleFilter] = useState<string>('all')
   const [appliedSearch, setAppliedSearch] = useState('')
   const [resettingPasswordFor, setResettingPasswordFor] = useState<string | null>(null)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isCreating, setIsCreating] = useState(false)
 
   // Usa busca real da API (administrative users)
   const { data: usersResponse, isLoading, error } = useUsersSearch(appliedSearch, statusFilter, undefined, true)
@@ -106,6 +110,32 @@ function UsersPage() {
     if (roleFilter === 'all') return true
     return user.tenant_role === roleFilter
   })
+
+  const queryClient = useQueryClient()
+
+  // Função para criar novo usuário administrativo
+  const handleCreateAdministrativeUser = async (data: CreateAdministrativeUserParams) => {
+    setIsCreating(true)
+    try {
+      await createAdministrativeUser(data)
+      toast.success('Usuário criado com sucesso!', {
+        description: `${data.name} foi adicionado ao sistema`,
+      })
+      
+      // Invalida cache para atualizar a lista
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      
+      setIsCreateModalOpen(false)
+    } catch (error) {
+      console.error('Erro ao criar usuário administrativo:', error)
+      toast.error('Erro ao criar usuário', {
+        description: error instanceof Error ? error.message : 'Não foi possível criar o usuário',
+      })
+      throw error // Re-throw para o modal tratar
+    } finally {
+      setIsCreating(false)
+    }
+  }
 
   // Função para resetar senha de um usuário
   const handleResetPassword = async (user: ApiUser) => {
@@ -248,8 +278,11 @@ function UsersPage() {
       <p className="text-gray-600 mb-6">
         Comece adicionando usuários ao sistema
       </p>
-      <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors inline-flex items-center gap-2">
-        <User size={20} />
+      <button
+        onClick={() => setIsCreateModalOpen(true)}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors inline-flex items-center gap-2"
+      >
+        <UserPlus size={20} />
         Adicionar Usuário
       </button>
     </div>
@@ -283,10 +316,19 @@ function UsersPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8 flex items-center gap-3">
-          <User className="text-blue-600" size={40} />
-          Usuários
-        </h1>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 flex items-center gap-3">
+            <User className="text-blue-600" size={40} />
+            Usuários
+          </h1>
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors inline-flex items-center gap-2"
+          >
+            <UserPlus size={20} />
+            Adicionar Usuário
+          </button>
+        </div>
         
         {/* Search and Filter */}
         <div className="bg-white rounded-xl shadow-md p-6 mb-6">
@@ -484,6 +526,14 @@ function UsersPage() {
           onRowClick={(user) => console.log('Clicou no usuário:', user.name)}
         />
       </div>
+
+      {/* Modal de criação de usuário administrativo */}
+      <CreateAdministrativeUserModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onConfirm={handleCreateAdministrativeUser}
+        isLoading={isCreating}
+      />
     </div>
   )
 }

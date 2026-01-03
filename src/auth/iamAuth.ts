@@ -77,7 +77,20 @@ export const iamAuth: AuthPort = {
       throw new Error('401: Unauthorized');
     }
 
-    return await resp.json();
+    const data = await resp.json();
+    
+    // Normaliza campos da API para o formato esperado pelo frontend
+    return {
+      id: data.id,
+      email: data.email,
+      name: data.name,
+      platformAccess: data.platform_access || data.platformAccess || 'NONE',
+      picture_url: data.picture_url,
+      status: data.status,
+      email_verified_at: data.email_verified_at,
+      last_login_at: data.last_login_at,
+      tenant_role: data.tenant_role,
+    };
   },
 
   async refresh(): Promise<string> {

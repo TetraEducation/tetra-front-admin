@@ -244,3 +244,45 @@ export async function registerUser(params: RegisterUserParams): Promise<Register
   }
 }
 
+// Tipo para criação de usuário administrativo
+export type CreateAdministrativeUserParams = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+// Tipo para resposta de criação de usuário administrativo
+export type CreateAdministrativeUserResponse = {
+  id: string;
+  name: string;
+  email: string;
+  status: UserStatus;
+  created_at: string;
+};
+
+// Cria um novo usuário administrativo
+export async function createAdministrativeUser(params: CreateAdministrativeUserParams): Promise<CreateAdministrativeUserResponse> {
+  try {
+    const logHostname = getLogHostname();
+    console.log(`[${logHostname}] createAdministrativeUser params:`, { ...params, password: '***' });
+    const response = await apiClient.post('/administrative/users', params);
+    console.log(`[${logHostname}] createAdministrativeUser response`, response.data);
+
+    const data = response.data.data || response.data;
+    
+    return {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      status: data.status,
+      created_at: data.created_at || new Date().toISOString(),
+    };
+  } catch (error) {
+    console.error(`[${getLogHostname()}] Erro ao criar usuário administrativo:`, error);
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data?.message || 'Erro ao criar usuário administrativo');
+    }
+    throw new Error('Erro ao criar usuário administrativo');
+  }
+}
+

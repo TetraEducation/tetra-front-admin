@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import { useSidebar } from "../contexts/SidebarContext";
+import { useAuth } from "@/auth/authStore";
 
 export default function TenantSidebar() {
   const { isCollapsed, setIsCollapsed } = useSidebar();
@@ -50,12 +51,51 @@ export default function TenantSidebar() {
     }, 550); // 500ms da animação + 50ms de margem
   };
 
-  // Mock user data - replace with actual user data from your auth system
-  const user = {
-    name: "Tenant Admin",
-    role: "Administrador do Tenant",
-    email: "admin@tenant.com",
+  // Dados reais do usuário do auth store
+  const { me } = useAuth();
+  const [imageError, setImageError] = useState(false);
+  
+  // Helper para gerar iniciais do nome
+  const getInitials = (name?: string) => {
+    if (!name) return 'U';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
   };
+  
+  // Helper para mapear role da API para nome amigável
+  const getRoleLabel = (role?: string | null): string => {
+    if (!role) return 'Membro';
+    
+    switch (role) {
+      case 'TENANT_OWNER':
+        return 'Proprietário';
+      case 'TENANT_ADMIN':
+        return 'Administrador';
+      case 'TENANT_MEMBER':
+        return 'Membro';
+      case 'TENANT_INSTRUCTOR':
+        return 'Instrutor';
+      case 'TENANT_SUPPORT':
+        return 'Suporte';
+      default:
+        return 'Membro';
+    }
+  };
+  
+  const user = {
+    name: me?.name || 'Usuário',
+    email: me?.email || '',
+    role: getRoleLabel(me?.tenant_role),
+    picture_url: me?.picture_url,
+  };
+  
+  // Reset image error quando picture_url mudar
+  useEffect(() => {
+    setImageError(false);
+  }, [user.picture_url]);
 
   // Fechar menu ao clicar fora
   useEffect(() => {
@@ -89,9 +129,20 @@ export default function TenantSidebar() {
           {/* Avatar Button */}
           <button
             onClick={toggleUserMenu}
-            className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center hover:bg-emerald-700 transition-colors shadow-lg border-2 border-emerald-500"
+            className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center hover:bg-emerald-700 transition-colors shadow-lg border-2 border-emerald-500 overflow-hidden"
           >
-            <User size={18} className="text-white" />
+            {user.picture_url && !imageError ? (
+              <img
+                src={user.picture_url}
+                alt={user.name}
+                className="w-full h-full object-cover"
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <span className="text-white text-xs font-semibold">
+                {getInitials(user.name)}
+              </span>
+            )}
           </button>
 
           {/* User Menu Dropdown - Click */}

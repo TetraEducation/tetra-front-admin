@@ -1,6 +1,6 @@
 // src/app/platform/hooks/useTenants.ts
 import { useQuery } from '@tanstack/react-query';
-import { resolveTenantByHost, fetchBranding, fetchTenants, type Branding, type FetchTenantsParams } from '@/lib/apiTenants';
+import { resolveTenantByHost, fetchBranding, fetchTenants, getTenantDetails, type Branding, type FetchTenantsParams, type TenantDetailsResponse } from '@/lib/apiTenants';
 
 const TENANT_HOST_KEY = (host: string) => ['tenant', 'resolve', host];
 const BRANDING_KEY = (tenantId?: string) => ['tenant', 'branding', tenantId];
@@ -77,4 +77,21 @@ export function useTenantsSearch(searchTerm: string, statusFilter: string = 'all
   };
   
   return useTenants(params);
+}
+
+// Hook para buscar detalhes de um tenant específico
+const TENANT_DETAILS_KEY = (tenantId?: string) => ['tenant', 'details', tenantId];
+
+export function useTenantDetails(tenantId?: string) {
+  return useQuery({
+    queryKey: TENANT_DETAILS_KEY(tenantId),
+    queryFn: () => {
+      if (!tenantId) throw new Error('tenantId is required');
+      return getTenantDetails(tenantId);
+    },
+    enabled: !!tenantId,
+    staleTime: 60_000, // 1 minuto
+    gcTime: 5 * 60_000, // 5 minutos
+    retry: 2,
+  });
 }

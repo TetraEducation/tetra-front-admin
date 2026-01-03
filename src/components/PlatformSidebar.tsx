@@ -12,6 +12,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useSidebar } from "@/contexts/SidebarContext";
+import { useAuth } from "@/auth/authStore";
 
 export default function PlatformSidebar() {
   const { isCollapsed, setIsCollapsed } = useSidebar();
@@ -34,12 +35,31 @@ export default function PlatformSidebar() {
     }, 550);
   };
 
-  // Mock user data - replace with actual user data from your auth system
-  const user = {
-    name: "Platform Admin",
-    role: "Administrador da Plataforma",
-    email: "admin@tetraeducacao.com",
+  // Dados reais do usuário do auth store
+  const { me } = useAuth();
+  const [imageError, setImageError] = useState(false);
+  
+  // Helper para gerar iniciais do nome
+  const getInitials = (name?: string) => {
+    if (!name) return 'U';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
   };
+  
+  const user = {
+    name: me?.name || 'Usuário',
+    email: me?.email || '',
+    role: me?.platformAccess === 'ADMIN' ? 'Administrador da Plataforma' : 'Usuário',
+    picture_url: me?.picture_url,
+  };
+  
+  // Reset image error quando picture_url mudar
+  useEffect(() => {
+    setImageError(false);
+  }, [user.picture_url]);
 
   // Fechar menu ao clicar fora
   useEffect(() => {
@@ -73,9 +93,20 @@ export default function PlatformSidebar() {
           {/* Avatar Button */}
           <button
             onClick={toggleUserMenu}
-            className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center hover:bg-emerald-700 transition-colors shadow-lg border-2 border-emerald-500"
+            className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center hover:bg-emerald-700 transition-colors shadow-lg border-2 border-emerald-500 overflow-hidden"
           >
-            <User size={18} className="text-white" />
+            {user.picture_url && !imageError ? (
+              <img
+                src={user.picture_url}
+                alt={user.name}
+                className="w-full h-full object-cover"
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <span className="text-white text-xs font-semibold">
+                {getInitials(user.name)}
+              </span>
+            )}
           </button>
 
           {/* User Menu Dropdown - Click */}
